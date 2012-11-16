@@ -88,13 +88,7 @@ int main(int argc, char **argv)
 {
 	// TODO: init values from commandline
 	(void)argc; (void)argv;
-#if 1
-	int w = 960;
-	int h = 540;
-#else
-	int w = 1920;
-	int h = 1080;
-#endif
+
 	int num = 5;
 	char *image_name[num];
 	image_name[0] = "duke.jpg";
@@ -106,11 +100,14 @@ int main(int argc, char **argv)
 	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
 
-#if 1
-	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, SDL_SWSURFACE);
-#else
-	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
-#endif
+	uint32_t flags = SDL_SWSURFACE|SDL_FULLSCREEN;
+
+	SDL_Rect** modes = SDL_ListModes(0, flags);
+
+	int w = modes[0]->w;
+	int h = modes[0]->h;
+
+	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, flags);
 
 	if (!screen)
 		exit(1);
