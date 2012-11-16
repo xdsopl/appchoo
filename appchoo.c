@@ -19,8 +19,6 @@ int fit_image(SDL_Surface *image, int w, int h)
 	int fx = (image->w + (w-1)) / w;
 	int fy = (image->h + (h-1)) / h;
 	int f = fx > fy ? fx : fy;
-	w = image->w;
-	h = image->h;
 	int pitch = image->pitch;
 	image->clip_rect.w = image->w /= f;
 	image->clip_rect.h = image->h /= f;
