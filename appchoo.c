@@ -27,15 +27,13 @@ int fit_image(SDL_Surface *image, int w, int h)
 	uint8_t *pixels = image->pixels;
 	for (int y = 0; y < image->h; y++) {
 		for (int x = 0; x < image->w; x++) {
-			uint32_t s[bytes];
-			for (int c = 0; c < bytes; c++)
-				s[c] = 0;
-			for (int j = 0; j < f; j++)
-				for (int i = 0; i < f; i++)
-					for (int c = 0; c < bytes; c++)
-						 s[c] += pixels[(y*f+j) * pitch + (x*f+i) * bytes + c];
-			for (int c = 0; c < bytes; c++)
-				pixels[y * image->pitch + x * bytes + c] = s[c] / (f*f);
+			for (int c = 0; c < bytes; c++) {
+				uint32_t sum = 0;
+				for (int j = 0; j < f; j++)
+					for (int i = 0; i < f; i++)
+						 sum += pixels[(y*f+j) * pitch + (x*f+i) * bytes + c];
+				pixels[y * image->pitch + x * bytes + c] = sum / (f*f);
+			}
 		}
 	}
 	return 1;
