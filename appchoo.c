@@ -97,12 +97,13 @@ int main(int argc, char **argv)
 	int w = 1920;
 	int h = 1080;
 #endif
-	int num = 3;
+	int num = 5;
 	char *image_name[num];
 	image_name[0] = "duke.jpg";
 	image_name[1] = "börek.jpg";
 	image_name[2] = "cat.jpg";
 	image_name[3] = "tachikoma.jpg";
+	image_name[4] = "mirror.png";
 
 	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
