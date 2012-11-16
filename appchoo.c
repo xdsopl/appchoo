@@ -20,9 +20,10 @@ int fit_image(SDL_Surface *image, int w, int h)
 	do f++; while (image->w / f > w || image->h / f > h);
 	w = image->w;
 	h = image->h;
+	int pitch = image->pitch;
 	image->clip_rect.w = image->w /= f;
 	image->clip_rect.h = image->h /= f;
-	image->pitch = image->w * 3;
+	image->pitch = (image->w * 3 + 3) & (~3);
 	uint8_t *pixels = image->pixels;
 	for (int y = 0; y < image->h; y++) {
 		for (int x = 0; x < image->w; x++) {
@@ -30,9 +31,9 @@ int fit_image(SDL_Surface *image, int w, int h)
 			for (int j = 0; j < f; j++)
 				for (int i = 0; i < f; i++)
 					for (int c = 0; c < 3; c++)
-						 s[c] += pixels[((y*f + j) * w + x*f + i) * 3 + c];
+						 s[c] += pixels[(y*f+j) * pitch + (x*f+i) * 3 + c];
 			for (int c = 0; c < 3; c++)
-				pixels[(y * image->w + x) * 3 + c] = s[c] / (f*f);
+				pixels[y * image->pitch + x * 3 + c] = s[c] / (f*f);
 		}
 	}
 	return 1;
