@@ -88,11 +88,11 @@ int main(int argc, char **argv)
 	// TODO: init values from commandline
 	(void)argc; (void)argv;
 #if 1
-	int w = 640;
-	int h = 480;
+	int w = 960;
+	int h = 540;
 #else
 	int w = 1920;
-	int h = 1200;
+	int h = 1080;
 #endif
 	int num = 3;
 	char *image_name[num];
