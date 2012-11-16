@@ -12,7 +12,8 @@ int fit_image(SDL_Surface *image, int w, int h)
 {
 	if (!image)
 		return 0;
-	if (image->format->BytesPerPixel != 3)
+	int bytes = image->format->BytesPerPixel;
+	if (bytes != 3 && bytes != 4)
 		return 0;
 	if (w >= image->w && h >= image->h)
 		return 1;
@@ -22,17 +23,19 @@ int fit_image(SDL_Surface *image, int w, int h)
 	int pitch = image->pitch;
 	image->clip_rect.w = image->w /= f;
 	image->clip_rect.h = image->h /= f;
-	image->pitch = (image->w * 3 + 3) & (~3);
+	image->pitch = (image->w * bytes + 3) & (~3);
 	uint8_t *pixels = image->pixels;
 	for (int y = 0; y < image->h; y++) {
 		for (int x = 0; x < image->w; x++) {
-			uint32_t s[3] = {0, 0, 0};
+			uint32_t s[bytes];
+			for (int c = 0; c < bytes; c++)
+				s[c] = 0;
 			for (int j = 0; j < f; j++)
 				for (int i = 0; i < f; i++)
-					for (int c = 0; c < 3; c++)
-						 s[c] += pixels[(y*f+j) * pitch + (x*f+i) * 3 + c];
-			for (int c = 0; c < 3; c++)
-				pixels[y * image->pitch + x * 3 + c] = s[c] / (f*f);
+					for (int c = 0; c < bytes; c++)
+						 s[c] += pixels[(y*f+j) * pitch + (x*f+i) * bytes + c];
+			for (int c = 0; c < bytes; c++)
+				pixels[y * image->pitch + x * bytes + c] = s[c] / (f*f);
 		}
 	}
 	return 1;
