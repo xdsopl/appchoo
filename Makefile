@@ -5,7 +5,7 @@ LDFLAGS = -lm $(shell sdl-config --libs) -lSDL_image
 appchoo: appchoo.c
 
 test: appchoo
-	echo -e 'duke.jpg duke\nbörek.jpg börek\ncat.jpg cat\nmirror.png mirror\ntachikoma.jpg tachikoma' | ./appchoo
+	exec `echo -e 'duke.jpg echo duke\nbörek.jpg echo börek\ncat.jpg echo cat\nmirror.png echo mirror\ntachikoma.jpg echo tachikoma' | ./appchoo`
 
 clean:
 	rm -f appchoo
