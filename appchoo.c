@@ -57,8 +57,11 @@ void center_image(SDL_Rect *dest, SDL_Rect *src)
 	}
 }
 
-void handle_events()
+void handle_events(SDL_Rect *rects, char **apps, int num)
 {
+	static int mouse_x = 0;
+	static int mouse_y = 0;
+	int button = 0;
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -74,6 +77,19 @@ void handle_events()
 						break;
 				}
 				break;
+			case SDL_MOUSEMOTION:
+				mouse_x = event.motion.x;
+				mouse_y = event.motion.y;
+				break;
+			case SDL_MOUSEBUTTONUP:
+				switch (event.button.button) {
+					case SDL_BUTTON_LEFT:
+						button = 1;
+						break;
+					default:
+						break;
+				}
+				break;
 			case SDL_QUIT:
 				exit(0);
 				break;
@@ -81,21 +97,33 @@ void handle_events()
 				break;
 		}
 	}
+	if (!button)
+		return;
+	for (int i = 0; i < num; i++) {
+		if (rects[i].x <= mouse_x && mouse_x < (rects[i].x + rects[i].w) && rects[i].y <= mouse_y && mouse_y < (rects[i].y + rects[i].h)) {
+			fputs(apps[i], stdout);
+			exit(0);
+		}
+	}
 
 }
 
 int main(int argc, char **argv)
 {
-	// TODO: init values from commandline
 	(void)argc; (void)argv;
 
-	int num = 5;
-	char *image_name[num];
-	image_name[0] = "duke.jpg";
-	image_name[1] = "börek.jpg";
-	image_name[2] = "cat.jpg";
-	image_name[3] = "tachikoma.jpg";
-	image_name[4] = "mirror.png";
+	int max = 32;
+	int num = 0;
+	char imgs[max][256];
+	char *apps[max];
+
+	while (num < max && fgets(imgs[num], 256, stdin)) {
+		imgs[num][strnlen(imgs[num], 256) - 1] = 0;
+		char *delim = strchr(imgs[num], ' ');
+		apps[num] = delim + 1;
+		*delim = 0;
+		num++;
+	}
 
 	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
@@ -128,8 +156,9 @@ int main(int argc, char **argv)
 			num_x++;
 	}
 
+	SDL_Rect rects[max];
 	for (int i = 0; i < num; i++) {
-		SDL_Surface *image = IMG_Load(image_name[i]);
+		SDL_Surface *image = IMG_Load(imgs[i]);
 
 		SDL_Rect dest = screen->clip_rect;
 
@@ -148,6 +177,7 @@ int main(int argc, char **argv)
 
 		SDL_BlitSurface(image, &src, screen, &dest);
 		SDL_FreeSurface(image);
+		rects[i] = dest;
 	}
 
 	SDL_Flip(screen);
@@ -156,7 +186,7 @@ int main(int argc, char **argv)
 		if (SDL_GetTicks() > (10 * 60 * 1000))
 			exit(0);
 		SDL_Delay(100);
-		handle_events();
+		handle_events(rects, apps, num);
 	}
 	return 0;
 }
