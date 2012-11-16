@@ -153,6 +153,8 @@ int main(int argc, char **argv)
 	SDL_Flip(screen);
 
 	for (;;) {
+		if (SDL_GetTicks() > (10 * 60 * 1000))
+			exit(0);
 		SDL_Delay(100);
 		handle_events();
 	}
