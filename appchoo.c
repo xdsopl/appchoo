@@ -38,6 +38,24 @@ int fit_image(SDL_Surface *image, int w, int h)
 	return 1;
 }
 
+void center_image(SDL_Rect *dest, SDL_Rect *src)
+{
+	if (dest->w > src->w) {
+		dest->x += dest->w / 2 - src->w / 2;
+		dest->w = src->w;
+	} else {
+		src->x += src->w / 2 - dest->w / 2;
+		src->w = dest->w;
+	}
+	if (dest->h > src->h) {
+		dest->y += dest->h / 2 - src->h / 2;
+		dest->h = src->h;
+	} else {
+		src->y += src->h / 2 - dest->h / 2;
+		src->h = dest->h;
+	}
+}
+
 void handle_events()
 {
 	SDL_Event event;
@@ -98,32 +116,15 @@ int main(int argc, char **argv)
 	SDL_WM_SetCaption("Application Chooser", "appchoo");
 
 	SDL_Surface *image = IMG_Load(image_name);
-	if (!fit_image(image, screen->w, screen->h))
+
+	SDL_Rect dest = screen->clip_rect;
+
+	if (!fit_image(image, dest.w, dest.h))
 		exit(1);
 
-	SDL_Rect src, dest;
-	if (screen->w > image->w) {
-		src.x = 0;
-		src.w = image->w;
-		dest.x = screen->w / 2 - image->w / 2;
-		dest.w = image->w;
-	} else {
-		src.x = image->w / 2 - screen->w / 2;
-		src.w = screen->w;
-		dest.x = 0;
-		dest.w = screen->w;
-	}
-	if (screen->h > image->h) {
-		src.y = 0;
-		src.h = image->h;
-		dest.y = screen->h / 2 - image->h / 2;
-		dest.h = image->h;
-	} else {
-		src.y = image->h / 2 - screen->h / 2;
-		src.h = screen->h;
-		dest.y = 0;
-		dest.h = screen->h;
-	}
+	SDL_Rect src = image->clip_rect;
+
+	center_image(&dest, &src);
 
 	SDL_BlitSurface(image, &src, screen, &dest);
 	SDL_FreeSurface(image);
