@@ -94,8 +94,12 @@ int main(int argc, char **argv)
 	int w = 1920;
 	int h = 1200;
 #endif
-	char *image_name;
-	image_name = "duke.jpg";
+	int num = 3;
+	char *image_name[num];
+	image_name[0] = "duke.jpg";
+	image_name[1] = "börek.jpg";
+	image_name[2] = "cat.jpg";
+	image_name[3] = "tachikoma.jpg";
 
 	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
@@ -115,19 +119,38 @@ int main(int argc, char **argv)
 
 	SDL_WM_SetCaption("Application Chooser", "appchoo");
 
-	SDL_Surface *image = IMG_Load(image_name);
+	int num_x = 1;
+	int num_y = 1;
 
-	SDL_Rect dest = screen->clip_rect;
+	while (num > (num_x * num_y)) {
+		if (num_y < num_x)
+			num_y++;
+		else
+			num_x++;
+	}
 
-	if (!fit_image(image, dest.w, dest.h))
-		exit(1);
+	for (int i = 0; i < num; i++) {
+		SDL_Surface *image = IMG_Load(image_name[i]);
 
-	SDL_Rect src = image->clip_rect;
+		SDL_Rect dest = screen->clip_rect;
 
-	center_image(&dest, &src);
+		dest.w /= num_x;
+		dest.h /= num_y;
 
-	SDL_BlitSurface(image, &src, screen, &dest);
-	SDL_FreeSurface(image);
+		dest.x += (i % num_x) * dest.w;
+		dest.y += ((i / num_x) % num_y) * dest.h;
+
+		if (!fit_image(image, dest.w, dest.h))
+			exit(1);
+
+		SDL_Rect src = image->clip_rect;
+
+		center_image(&dest, &src);
+
+		SDL_BlitSurface(image, &src, screen, &dest);
+		SDL_FreeSurface(image);
+	}
+
 	SDL_Flip(screen);
 
 	for (;;) {
