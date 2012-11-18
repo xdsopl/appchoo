@@ -1,0 +1,15 @@
+
+appchoo - Application Chooser with Timeout
+Written in 2012 by <Ahmet Inan> <ainan@mathematik.uni-freiburg.de>
+To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
+You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+appchoo takes a list of newline delimited apps and their pictures on stdin.
+after EOF it will fit those pictures to the screen and make them available
+as buttons. clicking (or touching on a touchscreen) one of the pictures will
+emit the app to stdout and exit.
+
+so you can choose apps to start like this:
+
+# exec `echo -e 'app1.jpg ./app1\napp2.jpg ./app2' | ./appchoo`
+
