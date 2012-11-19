@@ -109,6 +109,12 @@ void handle_events(SDL_Rect *rects, char **apps, int num)
 
 }
 
+SDL_Cursor *empty_cursor()
+{
+	static uint8_t null[32];
+	return SDL_CreateCursor(null, null, 16, 16, 0, 0);
+}
+
 int main(int argc, char **argv)
 {
 	(void)argc; (void)argv;
@@ -146,6 +152,10 @@ int main(int argc, char **argv)
 		exit(1);
 
 	SDL_WM_SetCaption("Application Chooser", "appchoo");
+
+#if 0
+	SDL_SetCursor(empty_cursor());
+#endif
 
 	int num_x = 1;
 	int num_y = 1;
