@@ -13,3 +13,7 @@ so you can choose apps to start like this:
 
 # exec `echo -e 'app1.jpg ./app1\napp2.jpg ./app2' | ./appchoo`
 
+another example but now hiding the cursor with the "-c" option:
+
+# exec $(./appchoo -c < applist)
+

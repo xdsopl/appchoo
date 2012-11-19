@@ -5,6 +5,7 @@ To the extent possible under law, the author(s) have dedicated all copyright and
 You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 */
 
+#include <getopt.h>
 #include <math.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -115,10 +116,32 @@ SDL_Cursor *empty_cursor()
 	return SDL_CreateCursor(null, null, 16, 16, 0, 0);
 }
 
+static int hide_cursor = 0;
+void init(int argc, char **argv)
+{
+	for (;;) {
+		switch (getopt(argc, argv, "hc")) {
+			case 'h':
+				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor)\n", argv[0]);
+				exit(0);
+				break;
+			case 'c':
+				hide_cursor = 1;
+				break;
+			case -1:
+				return;
+				break;
+			default:
+				fprintf(stderr, "use '-h' for help.\n");
+				exit(1);
+				break;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
-	(void)argc; (void)argv;
-
+	init(argc, argv);
 	int max = 32;
 	int num = 0;
 	char imgs[max][256];
@@ -153,9 +176,8 @@ int main(int argc, char **argv)
 
 	SDL_WM_SetCaption("Application Chooser", "appchoo");
 
-#if 0
-	SDL_SetCursor(empty_cursor());
-#endif
+	if (hide_cursor)
+		SDL_SetCursor(empty_cursor());
 
 	int num_x = 1;
 	int num_y = 1;
