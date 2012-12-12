@@ -158,14 +158,12 @@ int main(int argc, char **argv)
 	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
 
-	uint32_t flags = SDL_SWSURFACE|SDL_FULLSCREEN;
+	const SDL_VideoInfo *const info = SDL_GetVideoInfo();
 
-	SDL_Rect** modes = SDL_ListModes(0, flags);
+	int w = info->current_w;
+	int h = info->current_h;
 
-	int w = modes[0]->w;
-	int h = modes[0]->h;
-
-	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, flags);
+	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
 
 	if (!screen)
 		exit(1);
