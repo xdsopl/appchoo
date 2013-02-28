@@ -6,7 +6,6 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 */
 
 #include <getopt.h>
-#include <math.h>
 #include <SDL.h>
 #include <SDL_image.h>
 
