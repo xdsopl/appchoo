@@ -69,10 +69,10 @@ void handle_events(SDL_Rect *rects, char **apps, int num)
 			case SDL_KEYDOWN:
 				switch (event.key.keysym.sym) {
 					case SDLK_q:
-						exit(0);
+						exit(1);
 						break;
 					case SDLK_ESCAPE:
-						exit(0);
+						exit(1);
 						break;
 					default:
 						break;
