@@ -214,7 +214,7 @@ int main(int argc, char **argv)
 
 	for (;;) {
 		if (SDL_GetTicks() > (10 * 60 * 1000))
-			exit(0);
+			exit(1);
 		SDL_Delay(100);
 		handle_events(rects, apps, num);
 	}
