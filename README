@@ -19,3 +19,10 @@ another example but now hiding the cursor with the "-c" option:
 
 use "-t NUM" to set timeout to NUM seconds.
 
+lines beginning with '#' get ignored:
+
+# cat applist
+app1.jpg ./app1
+#app2.jpg ./app2
+app3.jpg ./app
+

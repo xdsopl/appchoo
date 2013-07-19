@@ -151,6 +151,8 @@ int main(int argc, char **argv)
 	char *apps[max];
 
 	while (num < max && fgets(imgs[num], 256, stdin)) {
+		if ('#' == *imgs[num])
+			continue;
 		imgs[num][strnlen(imgs[num], 256) - 1] = 0;
 		char *delim = strchr(imgs[num], ' ');
 		apps[num] = delim + 1;
