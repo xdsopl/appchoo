@@ -17,3 +17,5 @@ another example but now hiding the cursor with the "-c" option:
 
 # exec $(./appchoo -c < applist)
 
+use "-t NUM" to set timeout to NUM seconds.
+

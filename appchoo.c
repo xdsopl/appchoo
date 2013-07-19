@@ -92,7 +92,7 @@ void handle_events(SDL_Rect *rects, char **apps, int num)
 				}
 				break;
 			case SDL_QUIT:
-				exit(0);
+				exit(1);
 				break;
 			default:
 				break;
@@ -116,16 +116,20 @@ SDL_Cursor *empty_cursor()
 }
 
 static int hide_cursor = 0;
+static int timeout = 0;
 void init(int argc, char **argv)
 {
 	for (;;) {
-		switch (getopt(argc, argv, "hc")) {
+		switch (getopt(argc, argv, "hct:")) {
 			case 'h':
-				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor)\n", argv[0]);
+				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor) [-t NUM] (timeout after NUM seconds)\n", argv[0]);
 				exit(0);
 				break;
 			case 'c':
 				hide_cursor = 1;
+				break;
+			case 't':
+				timeout = atoi(optarg);
 				break;
 			case -1:
 				return;
@@ -154,7 +158,6 @@ int main(int argc, char **argv)
 		num++;
 	}
 
-	atexit(SDL_Quit);
 	SDL_Init(SDL_INIT_VIDEO);
 
 	const SDL_VideoInfo *const info = SDL_GetVideoInfo();
@@ -213,8 +216,8 @@ int main(int argc, char **argv)
 	SDL_Flip(screen);
 
 	for (;;) {
-		if (SDL_GetTicks() > (10 * 60 * 1000))
-			exit(1);
+		if (timeout && (int)SDL_GetTicks() > (timeout * 1000))
+			exit(0);
 		SDL_Delay(100);
 		handle_events(rects, apps, num);
 	}
