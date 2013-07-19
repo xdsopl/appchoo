@@ -117,12 +117,13 @@ SDL_Cursor *empty_cursor()
 
 static int hide_cursor = 0;
 static int timeout = 0;
+static char *to_cmd = "true";
 void init(int argc, char **argv)
 {
 	for (;;) {
-		switch (getopt(argc, argv, "hct:")) {
+		switch (getopt(argc, argv, "hct:d:")) {
 			case 'h':
-				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor) [-t NUM] (timeout after NUM seconds)\n", argv[0]);
+				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor) [-t NUM] (timeout after NUM seconds) [-d 'CMD'] (emit 'CMD' instead of 'true' on timeout)\n", argv[0]);
 				exit(1);
 				break;
 			case 'c':
@@ -130,6 +131,9 @@ void init(int argc, char **argv)
 				break;
 			case 't':
 				timeout = atoi(optarg);
+				break;
+			case 'd':
+				to_cmd = optarg;
 				break;
 			case -1:
 				return;
@@ -223,8 +227,10 @@ int main(int argc, char **argv)
 	SDL_Flip(screen);
 
 	for (;;) {
-		if (timeout && (int)SDL_GetTicks() > (timeout * 1000))
+		if (timeout && (int)SDL_GetTicks() > (timeout * 1000)) {
+			fputs(to_cmd, stdout);
 			exit(0);
+		}
 		SDL_Delay(100);
 		handle_events(rects, apps, num);
 	}

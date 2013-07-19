@@ -19,6 +19,8 @@ another example but now hiding the cursor with the "-c" option:
 
 use "-t NUM" to set timeout to NUM seconds.
 
+use "-d 'CMD'" to emit 'CMD' instead of 'true' on timeout.
+
 lines beginning with '#' get ignored:
 
 # cat applist
