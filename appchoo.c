@@ -123,7 +123,7 @@ void init(int argc, char **argv)
 		switch (getopt(argc, argv, "hct:")) {
 			case 'h':
 				fprintf(stderr, "usage: %s [-h] (show help) [-c] (hide cursor) [-t NUM] (timeout after NUM seconds)\n", argv[0]);
-				exit(0);
+				exit(1);
 				break;
 			case 'c':
 				hide_cursor = 1;
@@ -192,6 +192,11 @@ int main(int argc, char **argv)
 	SDL_Rect rects[max];
 	for (int i = 0; i < num; i++) {
 		SDL_Surface *image = IMG_Load(imgs[i]);
+
+		if (!image) {
+			fprintf(stderr, "could not load \"%s\"\n", imgs[i]);
+			exit(1);
+		}
 
 		SDL_Rect dest = screen->clip_rect;
 
