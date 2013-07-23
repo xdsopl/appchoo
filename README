@@ -28,3 +28,10 @@ app1.jpg ./app1
 #app2.jpg ./app2
 app3.jpg ./app
 
+you can add hidden corners:
+
+@NE echo north/east corner clicked
+@SE echo south/east corner clicked
+@SW echo south/west corner clicked
+@NW echo north/west corner clicked
+

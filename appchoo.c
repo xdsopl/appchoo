@@ -58,7 +58,15 @@ void center_image(SDL_Rect *dest, SDL_Rect *src)
 	}
 }
 
-void handle_events(SDL_Rect *rects, char **apps, int num)
+int handle_corner(int w, int h, int x, int y, int r2, int c)
+{
+	int cx = c & 1 ? w - 1 : 0;
+	int cy = c & 2 ? h - 1 : 0;
+	int d2 = (cx - x) * (cx - x) + (cy - y) * (cy - y);
+	return r2 > d2;
+}
+
+void handle_events(SDL_Surface *screen, SDL_Rect *rects, char **apps, int num, char corners[4][256], int r2)
 {
 	static int mouse_x = 0;
 	static int mouse_y = 0;
@@ -100,6 +108,14 @@ void handle_events(SDL_Rect *rects, char **apps, int num)
 	}
 	if (!button)
 		return;
+
+	for (int i = 0; i < 4; i++) {
+		if (*corners[i] && handle_corner(screen->w, screen->h, mouse_x, mouse_y, r2, i)) {
+			fputs(corners[i], stdout);
+			exit(0);
+		}
+	}
+
 	for (int i = 0; i < num; i++) {
 		if (rects[i].x <= mouse_x && mouse_x < (rects[i].x + rects[i].w) && rects[i].y <= mouse_y && mouse_y < (rects[i].y + rects[i].h)) {
 			fputs(apps[i], stdout);
@@ -146,6 +162,16 @@ void init(int argc, char **argv)
 	}
 }
 
+int check_corner(char *out, char *in, char *which)
+{
+	if (in == strstr(in, which)) {
+		strncpy(out, in + 4, 256);
+		out[strnlen(out, 256) - 1] = 0;
+		return 1;
+	}
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	init(argc, argv);
@@ -153,9 +179,20 @@ int main(int argc, char **argv)
 	int num = 0;
 	char imgs[max][256];
 	char *apps[max];
+	char corners[4][256];
+	for (int i = 0; i < 4; i++)
+		*corners[i] = 0;
 
 	while (num < max && fgets(imgs[num], 256, stdin)) {
 		if ('#' == *imgs[num])
+			continue;
+		if (check_corner(corners[0], imgs[num], "@NW"))
+			continue;
+		if (check_corner(corners[1], imgs[num], "@NE"))
+			continue;
+		if (check_corner(corners[2], imgs[num], "@SW"))
+			continue;
+		if (check_corner(corners[3], imgs[num], "@SE"))
 			continue;
 		imgs[num][strnlen(imgs[num], 256) - 1] = 0;
 		char *delim = strchr(imgs[num], ' ');
@@ -170,6 +207,7 @@ int main(int argc, char **argv)
 
 	int w = info->current_w;
 	int h = info->current_h;
+	int r2 = (w * w + h * h) / 0x4000;
 
 	SDL_Surface *screen = SDL_SetVideoMode(w, h, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
 
@@ -232,7 +270,7 @@ int main(int argc, char **argv)
 			exit(0);
 		}
 		SDL_Delay(100);
-		handle_events(rects, apps, num);
+		handle_events(screen, rects, apps, num, corners, r2);
 	}
 	return 0;
 }
